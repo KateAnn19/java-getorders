@@ -16,10 +16,8 @@ public class AgentController
 {
     @Autowired
     private AgentService agentsService;
-    //
-    //    http://localhost:2019/agents/agent/9
-    //    GET /agents/agent/{id} - Returns the agent and their customers with the given agent id
-    //
+
+    //GET /agents/agent/{id} - Returns the agent and their customers with the given agent id
     @GetMapping(value = "/agent/{id}", produces = {"application/json"})
     public ResponseEntity<?> findAgentById(@PathVariable long id){
         Agent a = agentsService.findAgentByCode(id);

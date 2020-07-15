@@ -3,6 +3,7 @@ package local.mcgeeka.getorders31.services;
 import local.mcgeeka.getorders31.models.Customer;
 import local.mcgeeka.getorders31.repositories.AgentsRepository;
 import local.mcgeeka.getorders31.repositories.CustomersRepository;
+import local.mcgeeka.getorders31.views.CustomerOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +41,13 @@ public class CustomerServiceImpl implements CustomerService
     public List<Customer> findAllCustomers()
     {
         List<Customer> rtnList = new ArrayList<>();
-        custrepos.findAll()
-            .iterator()
-            .forEachRemaining(rtnList::add);
+        custrepos.findAll().iterator().forEachRemaining(rtnList::add);
         return rtnList;
+    }
+
+    @Override
+    public List<CustomerOrder> getOrderCount()
+    {
+        return custrepos.getOrderCount();
     }
 }

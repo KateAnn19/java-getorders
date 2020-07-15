@@ -1,5 +1,7 @@
 package local.mcgeeka.getorders31.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class Agent
     private String country;
 
     @OneToMany(mappedBy = "agentfoo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("agentfoo")
     private List<Customer> customersfoo = new ArrayList<>(); //ties agent to customers
 
     public Agent()

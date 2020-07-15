@@ -1,5 +1,7 @@
 package local.mcgeeka.getorders31.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,11 +26,13 @@ public class Order
     @ManyToMany()
     @JoinTable(name = "orderspayments", joinColumns = @JoinColumn(name = "ordnum"),
         inverseJoinColumns = @JoinColumn(name = "paymentid"))
+    @JsonIgnoreProperties("ordersfoo")
     private Set<Payment> paymentsfoo = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "custcode", nullable = false) //this connects agent to customer
     //nullable forces customers to have an agent
+    @JsonIgnoreProperties("ordersfoo")
     private Customer customerfoo;
 
     public Order()

@@ -26,9 +26,7 @@ public class OrderServicesImpl implements OrderService
     public List<Order> findAllOrders()
     {
         List<Order> rtnList = new ArrayList<>();
-        ordersrepos.findAll()
-            .iterator()
-            .forEachRemaining(rtnList::add);
+        ordersrepos.findAll().iterator().forEachRemaining(rtnList::add);
         return rtnList;
     }
 
