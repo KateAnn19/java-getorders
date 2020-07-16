@@ -19,12 +19,13 @@ public class CustomerServiceImpl implements CustomerService
     @Autowired
     private CustomersRepository custrepos;
 
+    //this save method is now below - we added to it
 
-    @Override
-    public Customer save(Customer customer)
-    {
-        return custrepos.save(customer);
-    }
+    //    @Override
+    //    public Customer save(Customer customer)
+    //    {
+    //        return custrepos.save(customer);
+    //    }
 
     @Override
     public Customer findByCustomerCode(long id)
@@ -64,25 +65,19 @@ public class CustomerServiceImpl implements CustomerService
         custrepos.deleteById(custid);
     }
 
-    @Override
-    public Customer update(Customer customer, long custcode)
-    {
-        return null;
-    }
-
 
     @Transactional
     @Override
-    public Restaurant save(Restaurant restaurant)
+    public Customer save(Customer customer)
     {
         //this will do both a PUT and POST
-        Restaurant newRestaurant = new Restaurant(); //create a new restaurant
+        Customer newCustomer = new Customer(); //create a new restaurant
 
-        if(restaurant.getRestaurantid() != 0) //this means it's there
+        if(customer.getCustcode() != 0) //this means it's there
         {
             //check to see if it's valid
-            restrepos.findById(restaurant.getRestaurantid()).orElseThrow(() -> new EntityNotFoundException("Restaurant " + restaurant.getRestaurantid() + " not found!"));
-            newRestaurant.setRestaurantid(restaurant.getRestaurantid());
+            custrepos.findById(customer.getCustcode()).orElseThrow(() -> new EntityNotFoundException("Customer " + customer.getCustcode() + " not found!"));
+            newCustomer.setCustcode(customer.getCustcode());
         }
         //all these fields are a single entity
         newRestaurant.setName(restaurant.getName());
@@ -116,22 +111,6 @@ public class CustomerServiceImpl implements CustomerService
         return restrepos.save(newRestaurant); //if you send this with ID of 0 it tries to add // any other ID it replaces
     }
 
-    @Transactional //if any process fails the whole process fails (if changing data at all use this)
-    @Override
-    public void deleteAll()
-    {
-        restrepos.deleteAll();
-    }
-
-    @Transactional
-    @Override
-    public void delete(long restid)
-    {
-        restrepos.findById(restid).orElseThrow(() -> new EntityNotFoundException("Restaurant " + restid + " Not Found!"));
-        //first search to see if the id can be found (is it a valid id?) ...if it isn't an exception is thrown
-        //the first part helps with data validation ... it checks first even though you don't "have" to
-        restrepos.deleteById(restid);
-    }
 
     //we copied and pasted from the Save method
     //changing data needs to be transactional
@@ -147,9 +126,9 @@ public class CustomerServiceImpl implements CustomerService
     //9) if statement to check size and do a complete replacement
     @Transactional
     @Override
-    public Restaurant update(Restaurant restaurant, long restid)
+    public Customer update(Customer customer, long custcode)
     {
-        Restaurant currRestaurant = restrepos.findById(restid).orElseThrow(() -> new EntityNotFoundException("Restaurant " + restid + " not found!"));
+        Customer currCustomer = custrepos.findById(custcode).orElseThrow(() -> new EntityNotFoundException("Customer " + custcode + " not found!"));
         //all these fields are a single entity
         if(restaurant.getName() != null)
         {
