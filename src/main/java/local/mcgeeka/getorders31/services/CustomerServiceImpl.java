@@ -1,14 +1,18 @@
 package local.mcgeeka.getorders31.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import local.mcgeeka.getorders31.models.Agent;
 import local.mcgeeka.getorders31.models.Customer;
+import local.mcgeeka.getorders31.models.Order;
 import local.mcgeeka.getorders31.repositories.AgentsRepository;
 import local.mcgeeka.getorders31.repositories.CustomersRepository;
 import local.mcgeeka.getorders31.views.CustomerOrder;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,14 +69,12 @@ public class CustomerServiceImpl implements CustomerService
         custrepos.deleteById(custid);
     }
 
-
     @Transactional
     @Override
     public Customer save(Customer customer)
     {
         //this will do both a PUT and POST
         Customer newCustomer = new Customer(); //create a new restaurant
-
         if(customer.getCustcode() != 0) //this means it's there
         {
             //check to see if it's valid
@@ -80,110 +82,101 @@ public class CustomerServiceImpl implements CustomerService
             newCustomer.setCustcode(customer.getCustcode());
         }
         //all these fields are a single entity
-        newRestaurant.setName(restaurant.getName());
-        newRestaurant.setAddress(restaurant.getAddress());
-        newRestaurant.setCity(restaurant.getCity());
-        newRestaurant.setState(restaurant.getState());
-        newRestaurant.setTelephone(restaurant.getTelephone());
-        newRestaurant.setSeatcapacity(restaurant.getSeatcapacity());
+        newCustomer.setCustname(customer.getCustname());
+        newCustomer.setCustcity(customer.getCustcity());
+        newCustomer.setWorkingarea(customer.getWorkingarea());
+        newCustomer.setCustcountry(customer.getCustcountry());
+        newCustomer.setGrade(customer.getGrade());
+        newCustomer.setOpeningamt(customer.getOpeningamt());
+        newCustomer.setReceiveamt(customer.getReceiveamt());
+        newCustomer.setPaymentamt(customer.getPaymentamt());
+        newCustomer.setOutstandingamt(customer.getOutstandingamt());
+        newCustomer.setPhone(customer.getPhone());
+        newCustomer.setAgentfoo(customer.getAgentfoo());
         //all these fields are a single entity
-
+        /*@ManyToOne
+        @JoinColumn(name = "agentcode", nullable = false) //this connects agent to customer//nullable forces customers to have an agent
+        @JsonIgnoreProperties("customersfoo")
+        private Agent agentfoo;
+        */
         //two collections also exist - payments and menus
         //menu
         //OneToMany
-        newRestaurant.getMenus().clear(); //start with fresh list  -- JUST IN CASE CLEAR IT OUT
-        for(Menu m : restaurant.getMenus()) //cycle through list
+        newCustomer.getOrdersfoo().clear(); //start with fresh list  -- JUST IN CASE CLEAR IT OUT
+        for(Order o : customer.getOrdersfoo()) //cycle through list
         {
-            Menu newMenu = new Menu(m.getDish(), m.getPrice(), newRestaurant); //dish, price, restaurant  -- we don't care if they send an id (we ignore it)
-            newRestaurant.getMenus().add(newMenu);
+            Order newOrder = new Order(o.getOrdamount(), o.getAdvanceamount(), newCustomer, o.getOrderdescription());
+            newCustomer.getOrdersfoo().add(newOrder);
         }
-
-        //payments -- payments are a little different because they exist on their own
-        //ManyToMany
-        newRestaurant.getPayments().clear();
-        for(Payment p : restaurant.getPayments())
-        {
-            //we don't need to create a new object we need to FIND an object to add
-            Payment newPay = payrepos.findById(p.getPaymentid()).orElseThrow(() -> new EntityNotFoundException("Payment " + p.getPaymentid() + " Not Found"));//else throw says this is an invalid id
-            newRestaurant.getPayments().add(newPay);
-        }
-
-        return restrepos.save(newRestaurant); //if you send this with ID of 0 it tries to add // any other ID it replaces
+        return custrepos.save(newCustomer); //if you send this with ID of 0 it tries to add // any other ID it replaces
     }
 
-
-    //we copied and pasted from the Save method
-    //changing data needs to be transactional
-    //1) grab current restaurant
-    //2) get rid of if statement
-    //3) get rid of the new restaurant
-    //4) find current restuarant based off id sent in
-    //5) refactor w/ currRestaurant
-    //6) if client sent something to change then change it
-    //6) add if statements
-    //7) handle base data types
-    //8) handle collections (if they send any do a complete replace)
-    //9) if statement to check size and do a complete replacement
     @Transactional
     @Override
     public Customer update(Customer customer, long custcode)
     {
+
         Customer currCustomer = custrepos.findById(custcode).orElseThrow(() -> new EntityNotFoundException("Customer " + custcode + " not found!"));
         //all these fields are a single entity
-        if(restaurant.getName() != null)
+        if(customer.getCustname() != null)
         {
-            currRestaurant.setName(restaurant.getName());
+            currCustomer.setCustname(customer.getCustname());
         }
 
-        if(restaurant.getAddress() !=  null)
+        if(customer.getCustcity() !=  null)
         {
-            currRestaurant.setAddress(restaurant.getAddress());
+            currCustomer.setCustcity(customer.getCustcity());
         }
 
-        if(restaurant.getCity() != null)
+        if(customer.getWorkingarea() != null)
         {
-            currRestaurant.setCity(restaurant.getCity());
+            currCustomer.setWorkingarea(customer.getWorkingarea());
         }
 
-        if(restaurant.getState() != null){
-            currRestaurant.setState(restaurant.getState());
+        if(customer.getCustcountry() != null){
+            currCustomer.setCustcountry(customer.getCustcountry());
         }
 
-        if(restaurant.getTelephone() != null){
-            currRestaurant.setTelephone(restaurant.getTelephone());
+        if(customer.getGrade() != null){
+            currCustomer.setGrade(customer.getGrade());
         }
 
-        if(restaurant.hasvalueforseatcapacity){
-            currRestaurant.setSeatcapacity(restaurant.getSeatcapacity());
+        if(customer.hasvalueforopeningamt){
+            currCustomer.setOpeningamt(customer.getOpeningamt());
+        }
+
+        if(customer.hasvalueforreceiveamt){
+            currCustomer.setReceiveamt(customer.getReceiveamt());
+        }
+
+        if(customer.hasvalueforpaymentamt){
+            currCustomer.setPaymentamt(customer.getPaymentamt());
+        }
+
+        if(customer.hasvalueforoutstandingamt){
+            currCustomer.setOutstandingamt(customer.getOutstandingamt());
+        }
+
+        if(customer.getPhone() != null){
+            currCustomer.setPhone(customer.getPhone());
+        }
+
+        if(customer.getAgentfoo() != null){
+            currCustomer.setAgentfoo(customer.getAgentfoo());
         }
         //all these fields are a single entity
 
-        //two collections also exist - payments and menus
-        //menu
+        //collections
         //OneToMany
-        if(restaurant.getMenus().size() > 0){
-            currRestaurant.getMenus().clear(); //start with fresh list  -- JUST IN CASE CLEAR IT OUT
-            for(Menu m : restaurant.getMenus()) //cycle through list
+        if(customer.getOrdersfoo().size() > 0){
+            currCustomer.getOrdersfoo().clear(); //start with fresh list  -- JUST IN CASE CLEAR IT OUT
+            for(Order o : customer.getOrdersfoo()) //cycle through list
             {
-                Menu newMenu = new Menu(m.getDish(), m.getPrice(), currRestaurant); //dish, price, restaurant  -- we don't care if they send an id (we ignore it)
-                currRestaurant.getMenus().add(newMenu);
+                Order newOrder = new Order(o.getOrdamount(), o.getAdvanceamount(), currCustomer, o.getOrderdescription()); //dish, price, restaurant  -- we don't care if they send an id (we ignore it)
+                currCustomer.getOrdersfoo().add(newOrder);
             }
         }
-
-        //payments -- payments are a little different because they exist on their own
-        //ManyToMany
-        if(restaurant.getPayments().size() > 0)
-        {
-            currRestaurant.getPayments().clear();
-            for(Payment p : restaurant.getPayments())
-            {
-                //we don't need to create a new object we need to FIND an object to add
-                Payment newPay = payrepos.findById(p.getPaymentid()).orElseThrow(() -> new EntityNotFoundException("Payment " + p.getPaymentid() + " Not Found"));//else throw says this is an invalid id
-                currRestaurant.getPayments().add(newPay);
-            }
-        }
-
-        return restrepos.save(currRestaurant); //if you send this with ID of 0 it tries to add // any other ID it replaces
+        return custrepos.save(currCustomer); //if you send this with ID of 0 it tries to add // any other ID it replaces
     }
 
 
