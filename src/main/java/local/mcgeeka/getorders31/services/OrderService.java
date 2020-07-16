@@ -9,4 +9,6 @@ public interface OrderService
     Order save(Order order);
     List<Order> findAllOrders();
     Order findByOrderNum(long id);
+
+    void delete(long orderid);
 }

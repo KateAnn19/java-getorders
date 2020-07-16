@@ -13,4 +13,6 @@ public interface CustomerService
     List<Customer> findByNameLike(String thename);
     List <Customer> findAllCustomers();
     List<CustomerOrder> getOrderCount();
+
+    void delete(long custid);
 }

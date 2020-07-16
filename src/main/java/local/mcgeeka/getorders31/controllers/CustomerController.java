@@ -6,10 +6,7 @@ import local.mcgeeka.getorders31.views.CustomerOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,8 +29,7 @@ public class CustomerController
     //    http://localhost:2019/customers/customers/7
     //    GET /customers/customer/{id} - Returns the customer and their orders with the given customer id
     @GetMapping(value = "/customers/{id}", produces = {"application/json"})
-    public ResponseEntity<?> findRestaurantById(@PathVariable
-                                                    long id){
+    public ResponseEntity<?> findCustomerById(@PathVariable long id){
         Customer c = customerService.findByCustomerCode(id);
         return new ResponseEntity<>(c, HttpStatus.OK);
     }
@@ -58,6 +54,23 @@ public class CustomerController
         return new ResponseEntity<>(myList, HttpStatus.OK);
     }
 
+        //    POST /customers/customer - Adds a new customer including any new orders
+        //    POST http://localhost:2019/customers/customer
+
+        //    PUT /customers/customer/{custcode} - completely replaces the customer record including associated orders with the provided data
+        //    PUT http://localhost:2019/customers/customer/19
+
+        //    PATCH /customers/customer/{custcode} - updates customers with the new data. Only the new data is to be sent from the frontend client.
+        //    PATCH http://localhost:2019/customers/customer/19
+
+        //    DELETE /customers/customer/{custcode} - Deletes the given customer including any associated orders
+        //    DELETE http://localhost:2019/customers/customer/54
+        @DeleteMapping(value = "/customer/{custcode}")
+        public ResponseEntity<?> deleteCustById(@PathVariable long custcode)
+        {
+             customerService.delete(custcode);
+             return new ResponseEntity<>(HttpStatus.OK);
+        }
 
 }
 
