@@ -15,4 +15,7 @@ public interface CustomerService
     List<CustomerOrder> getOrderCount();
 
     void delete(long custid);
+
+    Customer update(Customer customer, long custcode); //takes in a restaurant and a restaurant id
+
 }

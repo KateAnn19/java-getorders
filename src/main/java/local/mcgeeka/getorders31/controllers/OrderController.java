@@ -52,6 +52,13 @@ public class OrderController
 
     //   PUT /orders/order/{ordernum} - completely replaces the given order
     //    PUT http://localhost:2019/orders/order/63
+    @PutMapping(value = "/order/{id}", consumes = "application/json")
+    public ResponseEntity<?> updateOrder(@PathVariable long id, @Valid @RequestBody Order updateOrder) // has two parameters and order doesn't matter
+    {
+        updateOrder.setOrdnum(id);
+        ordersService.save(updateOrder);
+        return new ResponseEntity<>(updateOrder,HttpStatus.OK);
+    }
 
     //   DELETE /orders/order/{ordernum} - deletes the given order
     //   DELETE http://localhost:2019/orders/order/58
