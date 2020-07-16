@@ -19,6 +19,12 @@ public class Order
 
     private double advanceamount;
 
+    @ManyToOne
+    @JoinColumn(name = "custcode", nullable = false) //this connects agent to customer
+    //nullable forces customers to have an agent
+    @JsonIgnoreProperties("ordersfoo")
+    private Customer customerfoo;
+
     private String orderdescription;
 
     //main class - w/o no payments
@@ -28,12 +34,6 @@ public class Order
         inverseJoinColumns = @JoinColumn(name = "paymentid"))
     @JsonIgnoreProperties("ordersfoo")
     private Set<Payment> paymentsfoo = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "custcode", nullable = false) //this connects agent to customer
-    //nullable forces customers to have an agent
-    @JsonIgnoreProperties("ordersfoo")
-    private Customer customerfoo;
 
     public Order()
     {
